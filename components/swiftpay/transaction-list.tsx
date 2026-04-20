@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Clock, AlertCircle, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle2, Clock, AlertCircle, XCircle, RefreshCw, ChevronDown } from "lucide-react";
+import RefundRequestModal from "./refund-request-modal";
 
 export type TxStatus = "Paid" | "Queued" | "ComplianceHold" | "Routing" | "Cancelled" | "Refunded" | "Validated";
 
@@ -29,15 +31,16 @@ export interface Transaction {
   rate: number;
   status: TxStatus;
   purpose: string;
+  payoutMethod?: "Bank Transfer" | "Mobile Money" | "Cash Pickup";
 }
 
 const SAMPLE_TRANSACTIONS: Transaction[] = [
-  { id: "TXN-2024-48291", date: "Apr 12, 2026", beneficiary: "Ravi Kumar", country: "India", flag: "🇮🇳", sendAmount: 500, sendCurrency: "USD", receiveAmount: 41725, receiveCurrency: "INR", rate: 83.45, status: "Paid", purpose: "Family Support" },
-  { id: "TXN-2024-47182", date: "Apr 10, 2026", beneficiary: "Priya Sharma", country: "India", flag: "🇮🇳", sendAmount: 250, sendCurrency: "USD", receiveAmount: 20862.5, receiveCurrency: "INR", rate: 83.45, status: "Routing", purpose: "Education" },
-  { id: "TXN-2024-46103", date: "Apr 8, 2026", beneficiary: "Ahmed Al-Farsi", country: "UAE", flag: "🇦🇪", sendAmount: 1000, sendCurrency: "USD", receiveAmount: 3673, receiveCurrency: "AED", rate: 3.673, status: "ComplianceHold", purpose: "Business Payment" },
-  { id: "TXN-2024-45089", date: "Apr 5, 2026", beneficiary: "Maria Santos", country: "Philippines", flag: "🇵🇭", sendAmount: 300, sendCurrency: "USD", receiveAmount: 17016, receiveCurrency: "PHP", rate: 56.72, status: "Queued", purpose: "Family Support" },
-  { id: "TXN-2024-44011", date: "Apr 1, 2026", beneficiary: "Wei Zhang", country: "Singapore", flag: "🇸🇬", sendAmount: 750, sendCurrency: "USD", receiveAmount: 1005.75, receiveCurrency: "SGD", rate: 1.341, status: "Paid", purpose: "Savings" },
-  { id: "TXN-2024-43008", date: "Mar 28, 2026", beneficiary: "Pedro Garcia", country: "Mexico", flag: "🇲🇽", sendAmount: 200, sendCurrency: "USD", receiveAmount: 3464, receiveCurrency: "MXN", rate: 17.32, status: "Cancelled", purpose: "Medical" },
+  { id: "TXN-2024-48291", date: "Apr 12, 2026", beneficiary: "Ravi Kumar", country: "India", flag: "🇮🇳", sendAmount: 500, sendCurrency: "USD", receiveAmount: 41725, receiveCurrency: "INR", rate: 83.45, status: "Paid", purpose: "Family Support", payoutMethod: "Bank Transfer" },
+  { id: "TXN-2024-47182", date: "Apr 10, 2026", beneficiary: "Priya Sharma", country: "India", flag: "🇮🇳", sendAmount: 250, sendCurrency: "USD", receiveAmount: 20862.5, receiveCurrency: "INR", rate: 83.45, status: "Routing", purpose: "Education", payoutMethod: "Mobile Money" },
+  { id: "TXN-2024-46103", date: "Apr 8, 2026", beneficiary: "Ahmed Al-Farsi", country: "UAE", flag: "🇦🇪", sendAmount: 1000, sendCurrency: "USD", receiveAmount: 3673, receiveCurrency: "AED", rate: 3.673, status: "ComplianceHold", purpose: "Business Payment", payoutMethod: "Bank Transfer" },
+  { id: "TXN-2024-45089", date: "Apr 5, 2026", beneficiary: "Maria Santos", country: "Philippines", flag: "🇵🇭", sendAmount: 300, sendCurrency: "USD", receiveAmount: 17016, receiveCurrency: "PHP", rate: 56.72, status: "Queued", purpose: "Family Support", payoutMethod: "Cash Pickup" },
+  { id: "TXN-2024-44011", date: "Apr 1, 2026", beneficiary: "Wei Zhang", country: "Singapore", flag: "🇸🇬", sendAmount: 750, sendCurrency: "USD", receiveAmount: 1005.75, receiveCurrency: "SGD", rate: 1.341, status: "Paid", purpose: "Savings", payoutMethod: "Mobile Money" },
+  { id: "TXN-2024-43008", date: "Mar 28, 2026", beneficiary: "Pedro Garcia", country: "Mexico", flag: "🇲🇽", sendAmount: 200, sendCurrency: "USD", receiveAmount: 3464, receiveCurrency: "MXN", rate: 17.32, status: "Cancelled", purpose: "Medical", payoutMethod: "Bank Transfer" },
 ];
 
 interface TransactionListProps {
@@ -48,6 +51,10 @@ interface TransactionListProps {
 
 export default function TransactionList({ transactions = SAMPLE_TRANSACTIONS, limit, showHeader = true }: TransactionListProps) {
   const displayed = limit ? transactions.slice(0, limit) : transactions;
+  const [expandedTx, setExpandedTx] = useState<string | null>(null);
+  const [refundModal, setRefundModal] = useState<{ isOpen: boolean; txId?: string }>({ isOpen: false });
+
+  const canRefund = (status: TxStatus) => ["Paid", "Queued", "Routing"].includes(status);
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden">
@@ -60,8 +67,11 @@ export default function TransactionList({ transactions = SAMPLE_TRANSACTIONS, li
       <div className="divide-y divide-border">
         {displayed.map((tx) => {
           const s = STATUS_CONFIG[tx.status];
+          const isExpanded = expandedTx === tx.id;
+          const refundableTx = refundModal.txId === tx.id && refundModal.isOpen && canRefund(tx.status) && tx.payoutMethod;
           return (
-            <div key={tx.id} className="px-5 py-4 flex items-center gap-4 hover:bg-muted/50 transition-colors cursor-pointer">
+            <div key={tx.id}>
+              <div className="px-5 py-4 flex items-center gap-4 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setExpandedTx(isExpanded ? null : tx.id)}>
               {/* Flag + Initial */}
               <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg shrink-0 border border-border">
                 {tx.flag}
@@ -90,12 +100,65 @@ export default function TransactionList({ transactions = SAMPLE_TRANSACTIONS, li
               </div>
 
               {/* Status */}
-              <div className="shrink-0">
+              <div className="shrink-0 flex items-center gap-3">
                 <span className={cn("inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full", s.className)}>
                   {s.icon}
                   {s.label}
                 </span>
+                <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", isExpanded && "rotate-180")} />
               </div>
+              </div>
+
+              {/* Expanded Details */}
+              {isExpanded && (
+                <div className="px-5 py-4 bg-muted/30 border-t border-border space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Exchange Rate</p>
+                      <p className="font-semibold text-foreground">1 {tx.sendCurrency} = {tx.rate} {tx.receiveCurrency}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Purpose</p>
+                      <p className="font-semibold text-foreground">{tx.purpose}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Payout Method</p>
+                      <p className="font-semibold text-foreground">{tx.payoutMethod || "Not specified"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Transaction ID</p>
+                      <p className="font-mono text-xs text-foreground">{tx.id}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Refund Button */}
+                  {canRefund(tx.status) && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRefundModal({ isOpen: true, txId: tx.id });
+                      }}
+                      className="w-full px-4 py-2 rounded-lg border border-destructive/50 text-destructive hover:bg-destructive/10 transition-colors text-sm font-medium"
+                    >
+                      Request Refund
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Refund Modal */}
+              {refundableTx && (
+                <RefundRequestModal
+                  isOpen={refundModal.isOpen}
+                  onClose={() => setRefundModal({ isOpen: false })}
+                  transactionId={tx.id}
+                  amount={tx.sendAmount}
+                  currency={tx.sendCurrency}
+                  beneficiary={tx.beneficiary}
+                  payoutMethod={tx.payoutMethod!}
+                  corridor={`${tx.country} (${tx.receiveCurrency})`}
+                />
+              )}
             </div>
           );
         })}
