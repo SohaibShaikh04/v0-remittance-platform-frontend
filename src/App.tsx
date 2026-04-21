@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Shell } from '@/components/swiftpay/shell';
 import { Topbar } from '@/components/swiftpay/topbar';
 
@@ -17,12 +18,27 @@ import AgentPortal from '@/pages/agent';
 import AgentKYC from '@/pages/agent/kyc';
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <Router>
       <div className="flex h-screen bg-background">
-        <Shell />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Topbar />
+        {/* Sidebar */}
+        <div className="hidden md:flex">
+          <Shell />
+        </div>
+
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 md:hidden bg-black/50" onClick={() => setSidebarOpen(false)} />
+        )}
+        <div className={`fixed left-0 top-0 h-full w-64 z-50 md:hidden transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <Shell />
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden w-full">
+          <Topbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
           <main className="flex-1 overflow-auto">
             <Routes>
               {/* Customer Portal */}

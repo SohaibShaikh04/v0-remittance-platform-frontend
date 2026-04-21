@@ -34,11 +34,11 @@ export default function CustomerPortal() {
   return (
     <>
       <Topbar title="Send Money" subtitle="Instant international transfers with best FX rates" />
-      <main className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
           {/* Hero Section */}
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-4 md:space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               <StatCard icon={TrendingUp} label="Total Sent" value="$5,250" color="primary" />
               <StatCard icon={CheckCircle2} label="Successful Transfers" value="12" color="success" />
               <StatCard icon={AlertCircle} label="Exchange Rate" value="1 USD = 83.45 INR" color="info" />
