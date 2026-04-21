@@ -1,5 +1,3 @@
-"use client";
-
 import { Bell, Search, ChevronDown } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +15,7 @@ interface TopbarProps {
   role?: string;
 }
 
-export default function Topbar({ title, subtitle, role = "Customer" }: TopbarProps) {
+export function Topbar({ title, subtitle, role = "Customer" }: TopbarProps) {
   return (
     <header className="h-16 bg-card border-b border-border flex items-center px-6 gap-4 shrink-0">
       {/* Left: Title */}
