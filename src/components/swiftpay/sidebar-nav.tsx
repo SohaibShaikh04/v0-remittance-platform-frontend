@@ -1,7 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   Send,
@@ -79,7 +76,8 @@ const navSections: NavSection[] = [
 ];
 
 export default function SidebarNav() {
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
   const [collapsed, setCollapsed] = useState(false);
 
   return (

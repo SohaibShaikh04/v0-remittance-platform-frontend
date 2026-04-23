@@ -1,6 +1,4 @@
-"use client";
-
-import { Bell, Search, ChevronDown } from "lucide-react";
+import { Bell, Search, ChevronDown, Menu } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,22 +10,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface TopbarProps {
-  title: string;
+  title?: string;
   subtitle?: string;
   role?: string;
+  onMenuClick?: () => void;
 }
 
-export default function Topbar({ title, subtitle, role = "Customer" }: TopbarProps) {
+export function Topbar({ title = "SwiftPay", subtitle, role = "Customer", onMenuClick }: TopbarProps) {
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center px-6 gap-4 shrink-0">
+    <header className="h-16 bg-card border-b border-border flex items-center px-4 md:px-6 gap-3 md:gap-4 shrink-0">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={onMenuClick}
+        className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+        aria-label="Toggle sidebar"
+      >
+        <Menu className="w-5 h-5 text-muted-foreground" />
+      </button>
+
       {/* Left: Title */}
       <div className="flex-1 min-w-0">
-        <h1 className="text-base font-semibold text-foreground truncate">{title}</h1>
+        <h1 className="text-sm md:text-base font-semibold text-foreground truncate">{title}</h1>
         {subtitle && <p className="text-xs text-muted-foreground truncate">{subtitle}</p>}
       </div>
 
       {/* Right: Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
         {/* Search */}
         <div className="hidden md:flex items-center gap-2 bg-muted rounded-lg px-3 py-1.5 text-sm text-muted-foreground w-48 cursor-text">
           <Search className="w-3.5 h-3.5 shrink-0" />

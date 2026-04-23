@@ -17,6 +17,10 @@ interface Notification {
   status: NotifStatus;
   date: string;
   time: string;
+  refundSource?: "Customer Initiated" | "Compliance Hold" | "System Error" | "Partner Failure";
+  processedBy?: string;
+  expectedCompletion?: string;
+  refundAmount?: string;
 }
 
 const INITIAL_NOTIFS: Notification[] = [
@@ -25,7 +29,7 @@ const INITIAL_NOTIFS: Notification[] = [
   { id: "N003", message: "Your KYC document (Source of Funds) has been approved. Full KYC level achieved.", category: "KYC", status: "Unread", date: "Apr 11, 2026", time: "5:45 PM" },
   { id: "N004", remitId: "TXN-2024-48055", message: "Rate lock for TXN-2024-48055 has expired. Please get a new quote.", category: "Quote", status: "Read", date: "Apr 11, 2026", time: "3:20 PM" },
   { id: "N005", remitId: "TXN-2024-47990", message: "Your transfer to Maria Santos is now being routed to the payout partner.", category: "Routing", status: "Read", date: "Apr 10, 2026", time: "11:05 AM" },
-  { id: "N006", remitId: "TXN-2024-47902", message: "Refund of $250 for cancelled transaction TXN-2024-47902 has been initiated.", category: "Refund", status: "Read", date: "Apr 9, 2026", time: "4:15 PM" },
+  { id: "N006", remitId: "TXN-2024-47902", message: "Refund of $250 for cancelled transaction TXN-2024-47902 has been initiated.", category: "Refund", status: "Read", date: "Apr 9, 2026", time: "4:15 PM", refundSource: "Customer Initiated", processedBy: "Operations Team", expectedCompletion: "Apr 14, 2026", refundAmount: "$250.00" },
   { id: "N007", message: "Document (Address Proof) uploaded is awaiting verification. We'll notify you once reviewed.", category: "KYC", status: "Read", date: "Apr 8, 2026", time: "9:30 AM" },
 ];
 
@@ -96,7 +100,40 @@ export default function NotificationsPage() {
                     {n.status === "Unread" && <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />}
                   </div>
                   <p className="text-sm text-foreground leading-relaxed">{n.message}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{n.date} at {n.time}</p>
+                  
+                  {/* Refund details */}
+                  {n.category === "Refund" && (n.refundSource || n.processedBy || n.expectedCompletion) && (
+                    <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        {n.refundAmount && (
+                          <div>
+                            <span className="text-muted-foreground block mb-0.5">Refund Amount</span>
+                            <span className="font-semibold text-foreground">{n.refundAmount}</span>
+                          </div>
+                        )}
+                        {n.refundSource && (
+                          <div>
+                            <span className="text-muted-foreground block mb-0.5">Initiated By</span>
+                            <span className="font-semibold text-foreground">{n.refundSource}</span>
+                          </div>
+                        )}
+                        {n.processedBy && (
+                          <div>
+                            <span className="text-muted-foreground block mb-0.5">Processed By</span>
+                            <span className="font-semibold text-foreground">{n.processedBy}</span>
+                          </div>
+                        )}
+                        {n.expectedCompletion && (
+                          <div>
+                            <span className="text-muted-foreground block mb-0.5">Expected By</span>
+                            <span className="font-semibold text-foreground">{n.expectedCompletion}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <p className="text-xs text-muted-foreground mt-2">{n.date} at {n.time}</p>
                 </div>
                 <button
                   onClick={() => dismiss(n.id)}

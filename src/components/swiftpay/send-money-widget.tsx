@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { ArrowRightLeft, Lock, Info, ChevronDown, CheckCircle2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -170,10 +168,10 @@ export default function SendMoneyWidget() {
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 space-y-5">
+    <div className="bg-card border border-border rounded-2xl p-4 md:p-6 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">Send Money</h2>
+        <h2 className="text-base md:text-lg font-bold text-foreground">Send Money</h2>
         {rateLocked && (
           <Badge className="gap-1 bg-[oklch(0.58_0.14_155)]/15 text-[oklch(0.35_0.12_155)] hover:bg-[oklch(0.58_0.14_155)]/15">
             <Lock className="w-3 h-3" /> Rate locked {lockTimer}s
@@ -184,20 +182,20 @@ export default function SendMoneyWidget() {
       {/* Send amount */}
       <div>
         <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1.5 block">You Send</label>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-col sm:flex-row">
           <div className="flex-1 relative">
             <input
               type="number"
               value={sendAmount}
               onChange={(e) => setSendAmount(e.target.value)}
-              className="w-full bg-muted rounded-xl px-4 py-3 text-xl font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full bg-muted rounded-xl px-3 md:px-4 py-2 md:py-3 text-lg md:text-xl font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="0.00"
             />
           </div>
           <div className="relative">
             <button
               onClick={() => setShowCurrencyPicker(showCurrencyPicker === "send" ? null : "send")}
-              className="flex items-center gap-2 bg-muted rounded-xl px-4 py-3 font-semibold text-foreground hover:bg-border transition-colors"
+              className="flex items-center gap-2 bg-muted rounded-xl px-3 md:px-4 py-2 md:py-3 font-semibold text-foreground hover:bg-border transition-colors w-full sm:w-auto justify-center sm:justify-start"
             >
               <span className="text-lg">{fromCur.flag}</span>
               <span className="text-sm">{fromCur.code}</span>
