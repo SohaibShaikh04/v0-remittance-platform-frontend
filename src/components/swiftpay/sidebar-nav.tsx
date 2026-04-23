@@ -88,40 +88,40 @@ export default function SidebarNav() {
       )}
     >
       {/* Logo */}
-      <div className={cn("flex items-center gap-3 px-4 py-5 border-b border-sidebar-border", collapsed && "justify-center px-0")}>
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <Send className="w-4 h-4 text-primary-foreground" />
+      <div className={cn("flex items-center gap-3 px-4 py-6 border-b border-sidebar-border/30 bg-gradient-to-br from-sidebar-primary/10 to-transparent", collapsed && "justify-center px-0")}>
+        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-lg">
+          <Send className="w-5 h-5 text-primary-foreground" />
         </div>
         {!collapsed && (
           <div>
             <span className="font-bold text-base text-sidebar-foreground tracking-tight">SwiftPay</span>
-            <p className="text-[10px] text-sidebar-foreground/50 leading-none">Remittance Platform</p>
+            <p className="text-[10px] text-sidebar-foreground/60 leading-none">Remittance Platform</p>
           </div>
         )}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
+      <nav className="flex-1 overflow-y-auto py-5 px-2 space-y-6">
         {navSections.map((section) => (
           <div key={section.title}>
             {!collapsed && (
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40 px-2 mb-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-sidebar-foreground/50 px-3 mb-2">
                 {section.title}
               </p>
             )}
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {section.items.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <li key={item.href}>
                     <Link
-                      href={item.href}
+                      to={item.href}
                       title={collapsed ? item.label : undefined}
                       className={cn(
-                        "flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors",
+                        "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                          ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/20"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
                         collapsed && "justify-center px-0"
                       )}
                     >
@@ -132,7 +132,7 @@ export default function SidebarNav() {
                           {item.badge && (
                             <Badge
                               variant={item.badgeVariant ?? "default"}
-                              className="text-[10px] h-4 px-1.5 min-w-[16px] text-center"
+                              className="text-[10px] h-5 px-1.5 min-w-[18px] text-center font-bold"
                             >
                               {item.badge}
                             </Badge>
