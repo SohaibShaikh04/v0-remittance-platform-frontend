@@ -11,7 +11,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    allowedHosts: ['sb-4nea845qd3cx.vercel.run', 'sb-3au0l91ue1so.vercel.run', 'localhost', '127.0.0.1'],
+    allowedHosts: ['sb-4nea845qd3cx.vercel.run', 'sb-3au0l91ue1so.vercel.run', 'sb-35c9ma7kp205.vercel.run', 'localhost', '127.0.0.1'],
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
